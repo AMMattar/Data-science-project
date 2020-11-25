@@ -1,0 +1,392 @@
+
+Content
+
+in this notebook i will be analyzing the data from african development bank, the data is about the top 5 sector that the bank is finding the most investment in and these are (Agriculture and rural development, Finance, Power, Transport, and ,Multi-Sector). the bank lists the project name and which country it belongs to and how much the country pays in U.A. what is U.A. well U.A An activity is defined by a "project" or "operation". Currency : XDR For reporting purposes we will use the ISO 4217 Currency Codes. UA is the official currency for the AfDB projects. 1 UA=1 SDR (International Monetary Fund Special Drawing Rights). (Source: https://www.iatiregistry.org/publisher/about/afdb )
+Difine the Problem
+
+well the problem is i wanted to know which country is the most contributing in the development of Africa and declaring the top 3 countries and graph thier percent of contribution in the developments
+Gathering Data
+
+gathering data is quit easy, you can gather such data from the bank website, and here the link for the website: https://www.afdb.org/en and i downloaded each sector alone and named the file after the sector (for instance finance.csv and etc)
+Cleaning Data
+
+first of all the data is downloaded in XlsX format of course we can work with this type in pandas but i prefer the CSV formate so i changed it first and then started the cleaning process as follows
+
+import pandas as pd
+df1 = pd.read_csv('../input/african-development-bank/agri1.csv', encoding='latin-1')
+df2 = pd.read_csv('../input/african-development-bank/finance1.csv', encoding='latin-1')
+df3 = pd.read_csv('../input/african-development-bank/multisector1.csv', encoding='latin-1')
+df4 = pd.read_csv('../input/african-development-bank/power1.csv', encoding='latin-1')
+df5 = pd.read_csv('../input/african-development-bank/transport1.csv', encoding='latin-1')
+#to check the data
+df1.info()
+df2.info()
+df3.info()
+df4.info()
+df5.info()
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1113 entries, 0 to 1112
+Data columns (total 9 columns):
+ #   Column               Non-Null Count  Dtype 
+---  ------               --------------  ----- 
+ 0   Project Code         1059 non-null   object
+ 1   Title                1058 non-null   object
+ 2   Commitment in U.A    1058 non-null   object
+ 3   Country              1058 non-null   object
+ 4   Starting Date        1058 non-null   object
+ 5   Status               1058 non-null   object
+ 6   Source of Financing  1056 non-null   object
+ 7   Sector               1058 non-null   object
+ 8   Sovereign            1052 non-null   object
+dtypes: object(9)
+memory usage: 78.4+ KB
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 355 entries, 0 to 354
+Data columns (total 9 columns):
+ #   Column               Non-Null Count  Dtype 
+---  ------               --------------  ----- 
+ 0   Project Code         337 non-null    object
+ 1   Title                336 non-null    object
+ 2   Commitment in U.A    336 non-null    object
+ 3   Country              336 non-null    object
+ 4   Starting Date        336 non-null    object
+ 5   Status               336 non-null    object
+ 6   Source of Financing  336 non-null    object
+ 7   Sector               336 non-null    object
+ 8   Sovereign            281 non-null    object
+dtypes: object(9)
+memory usage: 25.1+ KB
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 842 entries, 0 to 841
+Data columns (total 9 columns):
+ #   Column               Non-Null Count  Dtype 
+---  ------               --------------  ----- 
+ 0   Project Code         800 non-null    object
+ 1   Title                799 non-null    object
+ 2   Commitment in U.A    799 non-null    object
+ 3   Country              799 non-null    object
+ 4   Starting Date        799 non-null    object
+ 5   Status               799 non-null    object
+ 6   Source of Financing  799 non-null    object
+ 7   Sector               799 non-null    object
+ 8   Sovereign            797 non-null    object
+dtypes: object(9)
+memory usage: 59.3+ KB
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 439 entries, 0 to 438
+Data columns (total 9 columns):
+ #   Column               Non-Null Count  Dtype 
+---  ------               --------------  ----- 
+ 0   Project Code         416 non-null    object
+ 1   Title                415 non-null    object
+ 2   Commitment in U.A    415 non-null    object
+ 3   Country              415 non-null    object
+ 4   Starting Date        415 non-null    object
+ 5   Status               415 non-null    object
+ 6   Source of Financing  415 non-null    object
+ 7   Sector               415 non-null    object
+ 8   Sovereign            414 non-null    object
+dtypes: object(9)
+memory usage: 31.0+ KB
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 717 entries, 0 to 716
+Data columns (total 9 columns):
+ #   Column               Non-Null Count  Dtype 
+---  ------               --------------  ----- 
+ 0   Project Code         681 non-null    object
+ 1   Title                680 non-null    object
+ 2   Commitment in U.A    680 non-null    object
+ 3   Country              680 non-null    object
+ 4   Starting Date        680 non-null    object
+ 5   Status               680 non-null    object
+ 6   Source of Financing  679 non-null    object
+ 7   Sector               680 non-null    object
+ 8   Sovereign            680 non-null    object
+dtypes: object(9)
+memory usage: 50.5+ KB
+
+Now we need to modify the data to contain only the data we need and start things off by dropping null cells
+
+a = df1.dropna()
+f = df2.dropna()
+m = df3.dropna()
+p = df4.dropna()
+t = df5.dropna()
+
+now we need to change the type of starting date to make it contain only the starting years as we will work on the year of 2019 only for now as the 2020 is not yet compeleted and i wanted to make something that is up to date
+
+a['Starting Date'] = pd.to_datetime(t['Starting Date'])
+f['Starting Date'] = pd.to_datetime(t['Starting Date'])
+m['Starting Date'] = pd.to_datetime(t['Starting Date'])
+p['Starting Date'] = pd.to_datetime(t['Starting Date'])
+t['Starting Date'] = pd.to_datetime(t['Starting Date'])
+
+a['Starting_Year'] = a['Starting Date'].dt.year
+f['Starting_Year'] = f['Starting Date'].dt.year
+m['Starting_Year'] = m['Starting Date'].dt.year
+p['Starting_Year'] = p['Starting Date'].dt.year
+t['Starting_Year'] = t['Starting Date'].dt.year
+
+ag = a[a['Starting_Year'] == 2019]
+fi = f[f['Starting_Year'] == 2019]
+mu = m[m['Starting_Year'] == 2019]
+po = p[p['Starting_Year'] == 2019]
+tr = t[t['Starting_Year'] == 2019]
+
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:1: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  """Entry point for launching an IPython kernel.
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:2: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:3: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  This is separate from the ipykernel package so we can avoid doing imports until
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:4: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  after removing the cwd from sys.path.
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:5: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  """
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:7: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  import sys
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:8: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:9: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  if __name__ == '__main__':
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:10: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  # Remove the CWD from sys.path while we load stuff.
+/opt/conda/lib/python3.7/site-packages/ipykernel_launcher.py:11: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  # This is added back by InteractiveShellApp.init_path()
+
+now lets drop all the un wanted coulmns and create one big CSV that contain all the data that we need for our analysis
+
+agr = ag.drop(['Project Code', 'Title', 'Starting Date', 'Status', 'Source of Financing', 'Sovereign'], axis = 1)
+fin = fi.drop(['Project Code', 'Title', 'Starting Date', 'Status', 'Source of Financing', 'Sovereign'], axis = 1)
+mul = mu.drop(['Project Code', 'Title', 'Starting Date', 'Status', 'Source of Financing', 'Sovereign'], axis = 1)
+por = po.drop(['Project Code', 'Title', 'Starting Date', 'Status', 'Source of Financing', 'Sovereign'], axis = 1)
+tra = tr.drop(['Project Code', 'Title', 'Starting Date', 'Status', 'Source of Financing', 'Sovereign'], axis = 1)
+data = [agr, fin, mul, por, tra]
+df = pd.concat(data)
+
+df['Commitment in U.A'] = df['Commitment in U.A'].str.replace(r',', '') #error raise because of , when we try to make this column as numeric
+df['Commitment in U.A'] = df['Commitment in U.A'].apply(pd.to_numeric)
+df.info()
+df.to_csv('mydata.csv')
+
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 105 entries, 3 to 24
+Data columns (total 4 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Commitment in U.A  105 non-null    float64
+ 1   Country            105 non-null    object 
+ 2   Sector             105 non-null    object 
+ 3   Starting_Year      105 non-null    float64
+dtypes: float64(2), object(2)
+memory usage: 4.1+ KB
+
+Drawing conlusion
+
+now we have our data and it's ready to be used we can now draw our conclusions out of it
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+df = pd.read_csv('mydata.csv')
+%matplotlib inline
+df.head()
+
+	Unnamed: 0 	Commitment in U.A 	Country 	Sector 	Starting_Year
+0 	3 	20000000.00 	Madagascar 	Agriculture and Rural Development 	2019.0
+1 	4 	4000000.00 	Niger 	Agriculture and Rural Development 	2019.0
+2 	5 	1500000.00 	Mauritania 	Agriculture and Rural Development 	2019.0
+3 	6 	354228.07 	Mauritius 	Agriculture and Rural Development 	2019.0
+4 	7 	500000.00 	South Africa 	Agriculture and Rural Development 	2019.0
+
+now lets create a graph for each sector to spot the top 3 controbuting countries in each sector
+
+df1_agri = df.query('Sector == "Agriculture and Rural Development"')
+df1_fin = df.query('Sector == "Finance"')
+df1_tra = df.query('Sector == "Transport"')
+df1_mul = df.query('Sector == "Multi-Sector"')
+df1_pow = df.query('Sector == "Power"')
+
+df1_fin.plot(x ='Country', y = 'Commitment in U.A' ,kind ='bar', figsize = (8,8))
+# first multinational, second Morocco, third Kenya
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f5424082f10>
+
+df1_agri.plot(x ='Country', y = 'Commitment in U.A' ,kind ='bar', figsize = (8,8))
+# first Côte d'Ivoire, second congo, third sudan
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541fc59bd0>
+
+df1_pow.plot(x ='Country', y = 'Commitment in U.A' ,kind ='bar', figsize = (8,8))
+# first angola, second Mozambique, third Morocco
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541fcc4110>
+
+df1_tra.plot(x ='Country', y = 'Commitment in U.A' ,kind ='bar', figsize = (8,8))
+# first tanzania, second Uganda, third Kenya
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541fc41a90>
+
+df1_mul.plot(x ='Country', y = 'Commitment in U.A' ,kind ='bar', figsize = (8,8))
+# first niger, second rwanda, third Madagascar
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541fb8de10>
+
+Now let's find out the the percentage of each country
+
+xm = df1_mul['Commitment in U.A'].sum()
+xt = df1_tra['Commitment in U.A'].sum()
+xp = df1_pow['Commitment in U.A'].sum()
+xa = df1_agri['Commitment in U.A'].sum()
+xf = df1_fin['Commitment in U.A'].sum()
+#Finance
+yf1 = df1_fin.query('Country == "Multinational"')
+yf2 = df1_fin.query('Country == "Morocco"')
+yf3 = df1_fin.query('Country == "Kenya"')
+multinational_percent = (yf1['Commitment in U.A'].sum() / xf) * 100
+# 50.274878045406936
+morocco1_percent = (yf2['Commitment in U.A'].sum() / xf) * 100
+# 17.308766996498854
+kenya1_percent = (yf3['Commitment in U.A'].sum() / xf) * 100
+# 17.104531773436218
+#Agriculture
+ya1 = df1_agri.query('Country == "Côte d\'Ivoire"')
+ya2 = df1_agri.query('Country == "Congo"')
+ya3 = df1_agri.query('Country == "Sudan"')
+cote_percent = (ya1['Commitment in U.A'].sum() / xa) * 100
+# 31.50741594033916
+congo_percent = (ya2['Commitment in U.A'].sum() / xa) * 100
+# 18.711099794684774
+sudan_percent = (ya3['Commitment in U.A'].sum() / xa) * 100
+# 13.336644343098406
+#Power
+yp1 = df1_pow.query('Country == "Angola"')
+yp2 = df1_pow.query('Country == "Mozambique"')
+yp3 = df1_pow.query('Country == "Morocco"')
+angola_percent = (yp1['Commitment in U.A'].sum() / xp) * 100
+# 22.607751209625953
+mozambique_percent = (yp2['Commitment in U.A'].sum() / xp) * 100
+# 19.404458459382017
+morocco2_percent = (yp3['Commitment in U.A'].sum() / xp) * 100
+# 12.89769995885802
+#Transport
+yt1 = df1_tra.query('Country == "Uganda"')
+yt2 = df1_tra.query('Country == "Kenya"')
+yt3 = df1_tra.query('Country == "Tanzania, United Republic of"')
+uganda_percent = (yt1['Commitment in U.A'].sum() / xt) * 100
+# 14.39372966123651
+kenya2_percent = (yt2['Commitment in U.A'].sum() / xt) * 100
+# 10.677509240332622
+tanzania_percent = (yt3['Commitment in U.A'].sum() / xt) * 100
+# 17.001848235170208
+#multi-Sector
+ym1 = df1_mul.query('Country == "Niger"')
+ym2 = df1_mul.query('Country == "Rwanda"')
+ym3 = df1_mul.query('Country == "Madagascar"')
+niger_percent = (ym1['Commitment in U.A'].sum() / xm) * 100
+# 12.729731880022277
+rwanda_percent = (ym2['Commitment in U.A'].sum() / xm) * 100
+# 11.29763704351977
+madagascar_percent = (ym3['Commitment in U.A'].sum() / xm) * 100
+# 9.547298910016707
+
+after we computed each percent we will now find the percent for the rest of the countries in Africa
+
+rest_finance = 100 - (multinational_percent + morocco1_percent + kenya1_percent)
+rest_agriculture = 100 - (cote_percent + congo_percent + sudan_percent)
+rest_power = 100 - (angola_percent + mozambique_percent + morocco2_percent)
+rest_transport = 100 - (uganda_percent + kenya2_percent + tanzania_percent)
+rest_multi = 100 - (niger_percent + rwanda_percent + madagascar_percent)
+
+Lets create a pie chart to visualize our findings
+
+dfchart1 = pd.DataFrame({'finance sector':[multinational_percent, morocco1_percent, kenya1_percent, rest_finance]}, index = ['Multinational', 'Morocco', 'Kenya', 'Rest of Africa'])
+dfchart2 = pd.DataFrame({'agriculture sector': [cote_percent, congo_percent, sudan_percent, rest_agriculture]}, index = ['Cote d\'Ivoire', 'Congo', 'Sudan', 'Rest of Africa'])
+dfchart3 = pd.DataFrame({'power sector': [angola_percent, mozambique_percent, morocco2_percent, rest_power]}, index = ['Angola', 'Mozambique', 'Morocco', 'Rest of Africa'])
+dfchart4 = pd.DataFrame({'transport sector': [uganda_percent, kenya2_percent, tanzania_percent, rest_transport]}, index = ['Uganda', ' Kneya', 'Tanzania', 'Rest of Africa'])
+dfchart5 = pd.DataFrame({'multi sector': [niger_percent, rwanda_percent, madagascar_percent, rest_multi]}, index = ['Niger', 'Rwanda', 'Madagascar', 'Rest of Africa'])
+
+dfchart1.plot.pie(y = 'finance sector', figsize = (8,8))
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541fa7bdd0>
+
+dfchart2.plot.pie(y = 'agriculture sector', figsize = (8,8))
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541f9f9d90>
+
+dfchart3.plot.pie(y = 'power sector', figsize = (8,8))
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541fd0afd0>
+
+dfchart4.plot.pie(y = 'transport sector', figsize = (8,8))
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541fac9b10>
+
+dfchart5.plot.pie(y = 'multi sector', figsize = (8,8))
+
+<matplotlib.axes._subplots.AxesSubplot at 0x7f541f901490>
+
+Conclusion
+
+top 3 countries in Finance sector:
+
+    Multinational
+    Morocco
+    Kenya top 3 countries in Agriculture sector:
+    Côte d'Ivoire
+    Congo
+    Sudan top 3 countries in Power sector:
+    Angola
+    Mozambique
+    Morocco top 3 countries in Transport sector:
+    Tanzania
+    Uganda
+    Kenya top 3 countries in Multi-Sector:
+    Niger
+    Rwanda
+    Madagascar
+
+Declration¶
+
+note that this is my first own project, i created it from start to the finish and that i just started learning python 2 monthes ago and i wanted to create something with what i have learned so please excuse all the mistakes and bad codes that might be there better code to do this and if this so please provide such valiable feedback to me and thanks a lot in advance
